@@ -26,7 +26,18 @@ app.get('/api/movies', (req, res) => {
 
 //Add new movies and genres
 app.post('/api/movies',(req,res) => {
+const {error} = validateCourse(req.body);
+if(error) return res.status(400).send(error.details[0].message);
 
+
+const movie = {
+  id : movies.length + 1,
+  name:req.body.name,
+  genre:req.body.genre
+};
+
+movies.push(movie);
+res.send(movie);
 });
 
 //validate course function is used to validate the schema using Joi
