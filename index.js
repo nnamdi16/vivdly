@@ -24,5 +24,20 @@ app.get('/api/movies', (req, res) => {
   res.send(movies);
 });
 
+//Add new movies and genres
+app.post('/api/movies',(req,res) => {
+
+});
+
+//validate course function is used to validate the schema using Joi
+function validateCourse(movie) {
+  const schema = {
+    name:Joi.string().min(2).required(),
+    genre:Joi.string().min(3).required()
+  };
+
+  return Joi.validate(movie,schema);
+}
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port  ${port} ...`));
