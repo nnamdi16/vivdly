@@ -1,7 +1,8 @@
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
+const {validate,Movie} = require('../model/genre');
 const express = require('express');
 const router = express.Router();
-const Joi = require('joi');
+// const Joi = require('joi');
 
 
 //Create schema for the movies
@@ -14,15 +15,7 @@ const Joi = require('joi');
 //   }
 // });
 
-//Create the model
-const Movie = mongoose.model('Movie', new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    minlength: 5,
-    maxlength: 25
-  }
-}));
+
 
 // const movies = [{
 //     id: 1,
@@ -46,7 +39,7 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   const {
     error
-  } = validateMovies(req.body);
+  } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
 
@@ -64,7 +57,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   const {
     error
-  } = validateMovies(req.body);
+  } = validate(req.body);
   if (error) return res.status(404).send(error.details[0].message);
   const movie = await Movie.findByIdAndUpdate(req.params.id, {
     name: req.body.name, genre: req.body.genre
@@ -99,13 +92,6 @@ router.get('/:id', async(req, res) => {
   res.send(movie);
 });
 
-function validateMovies(movie) {
-  const schema = {
-    name: Joi.string().min(2).required(),
-    genre: Joi.string().min(3).required()
-  };
 
-  return Joi.validate(movie, schema);
-}
 
 module.exports = router;
