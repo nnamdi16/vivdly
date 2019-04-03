@@ -43,15 +43,15 @@ router.post('/', async (req, res) => {
   if (error) return res.status(400).send(error.details[0].message);
 
 
-  let genre= new Genre({
+  const genre= new Genre({
     // id: genres.length + 1,
     name: req.body.name,
     // genre: req.body.genre
   });
 
   // genres.push(Genre);
-  genre= await genre.save();
-  res.send(Genre);
+  await genre.save();
+  res.send(genre);
 });
 
 router.put('/:id', async (req, res) => {

@@ -28,7 +28,7 @@ router.post('/', async (req, res) => {
   if (error) return res.status(400).send(error.details[0].message);
 
 
-  let customer = new Customer({
+  const customer = new Customer({
     // id: customers.length + 1,
     name: req.body.name,
     phone: req.body.phone,
@@ -37,7 +37,7 @@ router.post('/', async (req, res) => {
 
   // customers.push(customer);
   //Save the customer
-  customer = await customer.save();
+ await customer.save();
   //Return it to the client
   res.send(customer);
 });
