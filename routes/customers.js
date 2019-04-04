@@ -1,4 +1,8 @@
-const {Customer,validate} = require('../model/customer');
+const auth = require('../middleware/auth');
+const {
+  Customer,
+  validate
+} = require('../model/customer');
 const express = require('express');
 const router = express.Router();
 
@@ -16,7 +20,7 @@ const router = express.Router();
 
 //Get all the customers
 router.get('/', async (req, res) => {
-  const customers = await Customer.find().sort('name'); 
+  const customers = await Customer.find().sort('name');
   res.send(customers);
 });
 
@@ -32,24 +36,25 @@ router.post('/', async (req, res) => {
     // id: customers.length + 1,
     name: req.body.name,
     phone: req.body.phone,
-    isGold:req.body.isGold
+    isGold: req.body.isGold
   });
 
   // customers.push(customer);
   //Save the customer
- await customer.save();
+  await customer.save();
   //Return it to the client
   res.send(customer);
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
   const {
     error
   } = validate(req.body);
   if (error) return res.status(404).send(error.details[0].message);
   const customer = await Customer.findByIdAndUpdate(req.params.id, {
-    name: req.body.name, phone: req.body.phone
-  }, {  
+    name: req.body.name,
+    phone: req.body.phone
+  }, {
     new: true
   }); //new:true to th get the update from the request.
   // const customer = customers.find(item => item.id === parseInt(req.params.id));
@@ -63,7 +68,7 @@ router.put('/:id', async (req, res) => {
 });
 
 //delete one customer
-router.delete('/:id', async(req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   const customer = await Customer.findByIdAndRemove(req.params.id);
   // const customer = customers.find(item => item.id === parseInt(req.params.id));
   if (!customer) return res.status(404).send(`The customer with the given ID ${req.params.id} does not exist`);
@@ -73,7 +78,7 @@ router.delete('/:id', async(req, res) => {
 });
 
 //Get one customer
-router.get('/:id', async(req, res) => {
+router.get('/:id', async (req, res) => {
   const customer = await Customer.findById(req.params.id);
   // const customer = customers.find(c => c.id === parseInt(req.params.id));
   if (!customer) return res.status(404).send(`The genre with the given ID ${req.params.id} does not exist`);
