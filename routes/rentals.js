@@ -1,3 +1,4 @@
+const auth = require('../middleware/auth');
 const {Rental,validate} = require('../model/rentals');
 const {Movie} = require('../model/movies');
 const {Customer} = require('../model/customer');
@@ -13,7 +14,7 @@ router.get('/',async(req,res) => {
   res.send(rentals);
 });
 
-router.post('/',async(req,res) => {
+router.post('/', auth, async(req,res) => {
   //Output when there is error
   const{error} = validate(req.body);
   if(error) res.status(400).send(error.details[0].message );
