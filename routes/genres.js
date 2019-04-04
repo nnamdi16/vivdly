@@ -1,3 +1,5 @@
+const admin = require('../middleware/admin');
+const auth = require('../middleware/auth');
 // const mongoose = require('mongoose');
 const {validate,Genre} = require('../model/genre');
 const express = require('express');
@@ -36,25 +38,26 @@ router.get('/', async (req, res) => {
 });
 
 //Add new genres and genres
-router.post('/', async (req, res) => {
+router.post('/', auth,async (req, res) => {
+
   const {
     error
   } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
 
-  let genre= new Genre({
+  const genre= new Genre({
     // id: genres.length + 1,
     name: req.body.name,
     // genre: req.body.genre
   });
 
   // genres.push(Genre);
-  genre= await genre.save();
-  res.send(Genre);
+  await genre.save();
+  res.send(genre);
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
   const {
     error
   } = validate(req.body);
@@ -76,7 +79,7 @@ router.put('/:id', async (req, res) => {
 });
 
 //delete one Genre
-router.delete('/:id', async(req, res) => {
+router.delete('/:id', [auth,admin], async(req, res) => {
   const genre= await Genre.findByIdAndRemove(req.params.id);
   // const genre= genres.find(item => item.id === parseInt(req.params.id));
   if (!genre) return res.status(404).send(`The genre with the given ID ${req.params.id} does not exist`);
