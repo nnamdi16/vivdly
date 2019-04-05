@@ -1,3 +1,4 @@
+const asyncMiddleware = require('../middleware/async');
 const config = require('config');
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');
@@ -19,7 +20,7 @@ function validate(req) {
   return Joi.validate(req, schema);
 }
 
-router.post('/', async (req, res) => {
+router.post('/', asyncMiddleware(async (req, res) => {
   const {error} = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -43,7 +44,7 @@ router.post('/', async (req, res) => {
   /* When the client logins in on the server, the Json Web token is generated and sent to the client to be used anytime they call any of the endpoints... It's the client's Id
   The payload includes public properties about the user
   The digital signature is created based on the content of the JSON web token along with secret or private key*/
-});
+}));
 
 /* config  is node package used to store the configuration settings of our applications in json or environment variable*/
 

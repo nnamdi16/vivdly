@@ -1,3 +1,4 @@
+const asyncMiddleware = require('../middleware/async');
 const auth = require('../middleware/auth');
 const {
   Customer,
@@ -19,13 +20,13 @@ const router = express.Router();
 // });
 
 //Get all the customers
-router.get('/', async (req, res) => {
+router.get('/', asyncMiddleware(async (req, res) => {
   const customers = await Customer.find().sort('name');
   res.send(customers);
-});
+}));
 
 //Add new customers and genres
-router.post('/', async (req, res) => {
+router.post('/', asyncMiddleware(async (req, res) => {
   const {
     error
   } = validate(req.body);
@@ -44,9 +45,9 @@ router.post('/', async (req, res) => {
   await customer.save();
   //Return it to the client
   res.send(customer);
-});
+}));
 
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', auth, asyncMiddleware(async (req, res) => {
   const {
     error
   } = validate(req.body);
@@ -65,25 +66,25 @@ router.put('/:id', auth, async (req, res) => {
   // customer.name = req.body.name;
   // customer.genre = req.body.genre;
   res.send(customer);
-});
+}));
 
 //delete one customer
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', auth, asyncMiddleware(async (req, res) => {
   const customer = await Customer.findByIdAndRemove(req.params.id);
   // const customer = customers.find(item => item.id === parseInt(req.params.id));
   if (!customer) return res.status(404).send(`The customer with the given ID ${req.params.id} does not exist`);
   // const index = customers.indexOf(customer);
   // customers.splice(index, 1);
   res.send(customer);
-});
+}));
 
 //Get one customer
-router.get('/:id', async (req, res) => {
+router.get('/:id', asyncMiddleware(async (req, res) => {
   const customer = await Customer.findById(req.params.id);
   // const customer = customers.find(c => c.id === parseInt(req.params.id));
   if (!customer) return res.status(404).send(`The genre with the given ID ${req.params.id} does not exist`);
   res.send(customer);
-});
+}));
 
 
 
