@@ -1,4 +1,4 @@
-const asyncMiddleware = require('../middleware/async');
+// const asyncMiddleware = require('../middleware/async');
 const admin = require('../middleware/admin');
 const auth = require('../middleware/auth');
 // const mongoose = require('mongoose');
@@ -44,14 +44,17 @@ const router = express.Router();
 //    next(ex);
 //  }
 // });
+//npm module to monkey patch our route handler called express-async-errors. It moves control from our route handler to our error handling function
+//Very popular error logging library is winston
 
-router.get('/', asyncMiddleware(async (req, res) => {
+router.get('/', async (req, res) => {
+  //throw new Error('Could not get the genres');
    const genres = await Genre.find().sort('name');
    res.send(genres);
- }));
+ });
 
 //Add new genres and genres
-router.post('/', auth, asyncMiddleware(async (req, res) => {
+router.post('/', auth, async (req, res) => {
 
   const {
     error
@@ -68,9 +71,9 @@ router.post('/', auth, asyncMiddleware(async (req, res) => {
   // genres.push(Genre);
   await genre.save();
   res.send(genre);
-}));
+});
 
-router.put('/:id', auth, asyncMiddleware(async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
   const {
     error
   } = validate(req.body);
@@ -89,25 +92,25 @@ router.put('/:id', auth, asyncMiddleware(async (req, res) => {
   // Genre.name = req.body.name;
   // Genre.genre = req.body.genre;
   res.send(genre);
-}));
+});
 
 //delete one Genre
-router.delete('/:id', [auth,admin], asyncMiddleware(async(req, res) => {
+router.delete('/:id', [auth,admin], async(req, res) => {
   const genre= await Genre.findByIdAndRemove(req.params.id);
   // const genre= genres.find(item => item.id === parseInt(req.params.id));
   if (!genre) return res.status(404).send(`The genre with the given ID ${req.params.id} does not exist`);
   // const index = genres.indexOf(Genre);
   // genres.splice(index, 1);
   res.send(genre);
-}));
+});
 
 //Get one Genre
-router.get('/:id', asyncMiddleware(async(req, res) => {
+router.get('/:id', async(req, res) => {
   const genre= await Genre.findById(req.params.id);
   // const genre= genres.find(c => c.id === parseInt(req.params.id));
   if (!genre) return res.status(404).send(`The genre with the given ID ${req.params.id} does not exist`);
   res.send(genre);
-}));
+});
 
 
 
